@@ -8,7 +8,7 @@ from module.plugins.internal.XFSAccount import XFSAccount
 class UptoboxCom(XFSAccount):
 	__name__    = "UptoboxCom"
 	__type__    = "account"
-	__version__ = "0.13"
+	__version__ = "0.14"
 	__status__  = "testing"
 
 	__description__ = "Uptobox.com account plugin"
@@ -23,7 +23,7 @@ class UptoboxCom(XFSAccount):
 	def login(self, user, password, data, req):
 
 		jsonstring = self.load(self.LOGIN_URL, None,  post={'login': user, 'password': password, 'op': 'login'})
-		
+		print jsonstring
 		parsedjson = json.loads(jsonstring)
 		
 		if parsedjson['success'] is None:
