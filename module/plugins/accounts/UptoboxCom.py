@@ -10,7 +10,7 @@ from module.plugins.internal.Account import Account
 class UptoboxCom(Account):
 	__name__    = "UptoboxCom"
 	__type__    = "account"
-	__version__ = "0.10"
+	__version__ = "0.14"
 	__status__  = "testing"
 
 	__description__ = """Uptobox.com account plugin"""
