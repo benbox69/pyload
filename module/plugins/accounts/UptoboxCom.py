@@ -59,7 +59,7 @@ class UptoboxCom(Account):
         	else:
             		self.log_debug("VALID_UNTIL_PATTERN not found")
 
-		return {'validuntil': validuntil, 'trafficleft': trafficleft, 'premium': premium}
+		return {'validuntil': validuntil, 'trafficleft': trafficleft, 'leechtraffic': -1, 'premium': premium}
 
 
 	def signin(self, user, password, data):
