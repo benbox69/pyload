@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import json
-
 from module.plugins.internal.XFSAccount import XFSAccount
 
 
