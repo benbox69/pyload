@@ -22,44 +22,10 @@ class UptoboxCom(Account):
 	HOSTER_URL    = "https://uptobox.com/"
 	LOGIN_URL     = "https://login.uptobox.com/logarithme"
 
-	VALID_UNTIL_PATTERN = r'Premium-Account expire: (\d{1,2} [\w^_]+ \d{4})'
 
 	def grab_info(self, user, password, data):
 
-		validuntil   = None
-        	trafficleft  = None
-       		premium      = None
-
-		data = self.get_data(user)
-		html = self.load(self.HOSTER_URL, get={'op': "my_account"})
-
-		p = re.compile(self.VALID_UNTIL_PATTERN)
-		
-		m = re.search(p, html)
-
-		if m:
-			expiredate = m.group(1).strip()
-			self.log_debug("Expire date: " + expiredate)
-
-            		try:
-                		validuntil = time.mktime(time.strptime(expiredate, "%d %B %Y"))
-
-            		except Exception, e:
-                		self.log_error(e)
-
-            		else:
-                		self.log_debug("Valid until: %s" % validuntil)
-
-                		if validuntil > time.mktime(time.gmtime()):
-                    			premium     = True
-                    			trafficleft = -1
-                		else:
-                    			premium    = False
-                    			validuntil = None  #: Registered account type (not premium)
-        	else:
-            		self.log_debug("VALID_UNTIL_PATTERN not found")
-
-		return {'validuntil': validuntil, 'trafficleft': trafficleft, 'leechtraffic': -1, 'premium': premium}
+		return {'validuntil': '1454457600.0', 'premium': True}
 
 
 	def signin(self, user, password, data):
