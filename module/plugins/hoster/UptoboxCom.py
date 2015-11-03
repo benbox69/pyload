@@ -10,12 +10,11 @@ class UptoboxCom(XFSHoster):
     __status__  = "testing"
 
     __pattern__ = r'https?://(?:www\.)?(uptobox|uptostream)\.com/\w{12}'
-    __config__  = [("activated"      , "bool", "Activated"                                        , True     ),
-                   ("use_premium"    , "bool", "Use premium account if available"                 , True     ),
-                   ("fallback"       , "bool", "Fallback to free download if premium fails"       , True     ),
-                   ("chk_filesize"   , "bool", "Check file size"                                  , False    ),
-                   ("max_wait"       , "int" , "Reconnect if waiting time is greater than minutes", 10       ),
-                   ("size_tolerance" , "int" , "Tolerance is used when comparing displayed size"  , 104857600)]
+    __config__  = [("activated"   , "bool", "Activated"                                        , True ),
+                   ("use_premium" , "bool", "Use premium account if available"                 , True ),
+                   ("fallback"    , "bool", "Fallback to free download if premium fails"       , True ),
+                   ("chk_filesize", "bool", "Check file size"                                  , False),
+                   ("max_wait"    , "int" , "Reconnect if waiting time is greater than minutes", 10   )]
 
     __description__ = """Uptobox.com hoster plugin"""
     __license__     = "GPLv3"
@@ -32,23 +31,30 @@ class UptoboxCom(XFSHoster):
 
     DL_LIMIT_PATTERN = r'>You have to wait (.+) to launch a new download<'
 
-    def check_download(self):
-        self.log_info(_("Checking downloaded file..."))
+    def check_filesize(self, file_size, size_tolerance=1024000):
+        """
+        Checks the file size of the last downloaded file
+        :param file_size: expected file size
+        :param size_tolerance: size check tolerance
+        """
+        if not self.last_download:
+            return
+    
+        dl_location = encode(self.last_download)
+        dl_size     = os.stat(dl_location).st_size
+                          
+        if dl_size < 1:
+            self.fail(_("Empty file"))
 
-        if self.captcha.task and not self.last_download:
-            self.retry_captcha()
+        elif file_size > 0:
+            diff = abs(file_size - dl_size)
 
-        elif self.check_file({'Empty file': re.compile(r'\A((.|)(\2|\s)*)\Z')},
-                             delete=True):
-            self.error(_("Empty file"))
+            if diff > size_tolerance:
+                self.log_info(_("File size mismatch | Expected file size: %s | Downloaded file size: %s")
+                          % (file_size, dl_size))
 
-        elif self.get_config('chk_filesize', False) and self.info.get('size'):
-            # 10485760 is 10MB, tolerance is used when comparing displayed size on the hoster website to real size
-            # For example displayed size can be 1.46GB for example, but real size can be 1.4649853GB
-            self.check_filesize(self.info['size'], size_tolerance=104857600)
-
-        else:
-            self.log_info(_("File is OK"))
+            elif diff != 0:
+                self.log_warning(_("File size is not equal to expected size"))
 
     def setup(self):
         self.multiDL = True
